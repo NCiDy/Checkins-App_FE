@@ -10,7 +10,6 @@ class AuthService {
     );
     return data;
   }
-
   async register(payload: RegisterPayload): Promise<AuthResponse> {
     const { data } = await axiosInstance.post<AuthResponse>(
       API_ENDPOINTS.AUTH.REGISTER,
