@@ -8,47 +8,59 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 import { authService } from "@/modules/auth/services/auth.service";
-
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
-
+export default function RegisterPage() {
   const router = useRouter();
-
+  const [name,setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
+    // check password match
+    if (password !== confirmPassword) {
+      alert("Mật khẩu không khớp!");
+      return;
+    }
+    try {
+      const res = await authService.register({
+        name,
+        email,
+        password,
+      });
 
-    const res = await authService.login({
-      email,
-      password,
-    });
+      localStorage.setItem("user_login", res.accessToken);
 
-    localStorage.setItem("admin_login", res.accessToken);
-    // localStorage.setItem("admin_email", email);
-    router.push("/admin");
-    // console.log("FULL RES:", res); 
-    // console.log("ACCESS TOKEN:", res.accessToken);
-    // localStorage.removeItem("accessToken");
+      router.push("/admin"); //Gắn tạm
+    } catch (error) {
+      console.error("REGISTER ERROR:", error);
+      alert("Đăng ký thất bại!");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
-      
-      {/* CARD LOGIN */}
+
       <Card className="w-full max-w-md md:max-w-lg lg:max-w-xl shadow-xl rounded-2xl">
-        
+
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-bold">
-            Đăng nhập
+            Đăng ký
           </CardTitle>
           <p className="text-sm text-gray-500">
-            Đăng nhập bằng email và mật khẩu
+            Tạo tài khoản mới
           </p>
         </CardHeader>
 
         <CardContent className="space-y-4">
+            <div className="space-y-2">
+                <Label>Tên người dùng</Label>
+                <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+            </div>
 
           {/* EMAIL */}
           <div className="space-y-2">
@@ -71,19 +83,30 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* CONFIRM PASSWORD */}
+          <div className="space-y-2">
+            <Label>Xác nhận mật khẩu</Label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+
           {/* BUTTON */}
-          <Button className="w-full mt-2" onClick={handleLogin}>
-            Đăng nhập
+          <Button className="w-full mt-2" onClick={handleRegister}>
+            Đăng ký
           </Button>
 
-          {/* REGISTER */}
+          {/* LOGIN LINK */}
           <div className="text-center text-sm text-gray-600 mt-4">
-            Chưa có tài khoản?{" "}
+            Đã có tài khoản?{" "}
             <Link
-              href="/register"
+              href="/login"
               className="text-blue-600 font-medium hover:underline"
             >
-              Đăng ký
+              Đăng nhập
             </Link>
           </div>
 

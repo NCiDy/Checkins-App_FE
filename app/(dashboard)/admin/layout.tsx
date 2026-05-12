@@ -1,10 +1,22 @@
+"use client";
 import Link from "next/link";
+import { jwtDecode } from "jwt-decode";
+import { decode } from "punycode";
+
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const accessToken = localStorage.getItem("admin_login");
+  let email = "";
+  if (accessToken) {
+    const decoded: any = jwtDecode(accessToken);
+    email = decoded.sub;
+  }
+  console.log(email);
+  // const email = localStorage.getItem("admin_email");
   return (
     <div className="min-h-screen flex bg-white text-black">
 
@@ -68,12 +80,9 @@ export default function AdminLayout({
           <div className="flex items-center gap-3">
 
             <span className="text-sm text-black">
-              admin@gmail.com
+              {email || "Guest"}
             </span>
 
-            <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
-              A
-            </div>
 
           </div>
 
